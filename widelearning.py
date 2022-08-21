@@ -15,6 +15,9 @@ def txt_kernel(file_path):
     for ii in weights:
         for i1, elem in enumerate(ii):
             ii[i1] = [[int(elem)]]
+            
+    with open('kernel.txt', 'w') as file:
+        file.write(str(weights))
 
     return weights 
     
@@ -79,4 +82,29 @@ def diag(d):
         for gg in range(len(z2[hh])):
             print(z2[hh][gg], end=',')
 
+def add_kernel(path, init_kernel):
+    ff = open(path, 'r')
+    
+    w1 = init_kernel
+
+    weights = []
+
+    for i in ff:
+        weights.append(i.strip().split(','))
+
+    for j in weights:
+        j.pop()
+    
+    for ii in weights:
+        for i1, elem in enumerate(ii):
+            ii[i1] = int(elem)
+                               
+    for i in range(len(w1)):
+        for j in range(len(w1)):
+            w1[i][j][0].append(weights[i][j])
+
+    with open('kernel.txt', 'w') as file:
+        file.write(str(w1))
+        
+    return w1
 
