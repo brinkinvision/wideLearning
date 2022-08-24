@@ -1,0 +1,5 @@
+датасет:
+https://www.kaggle.com/vishnu0399/fashion-mnist-keras-cnn/data
+
+структура:
+https://www.kaggle.com/vishnu0399/fashion-mnist-keras-cnn/notebook
