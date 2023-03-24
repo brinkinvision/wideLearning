@@ -107,4 +107,73 @@ def add_kernel(path, init_kernel):
         file.write(str(w1))
         
     return w1
+    
+def horizontal(dim, values):
+    matrix = []
+    for i in range(dim):
+        row = []
+        for j in range(dim):
+            row.append(values[i % len(values)])
+        matrix.append(row)
+		
+	with open('horizontal.txt', 'w') as f:
+		for row in z:
+			f.write(','.join(str(x) for x in row) + ',\n')
+	
+    return matrix
+
+def vertical(dim, values):
+    matrix = []
+    for i in range(dim):
+        row = []
+        for j in range(dim):
+            row.append(values[j % len(values)])
+        matrix.append(row)
+		
+	with open('vertical.txt', 'w') as f:
+		for row in z:
+			f.write(','.join(str(x) for x in row) + ',\n')
+	
+    return matrix
+
+def diagonal(up, down, d, dimension):
+
+    matrix = [[0 for i in range(dimension)] for j in range(dimension)] 
+    for i in range(dimension):
+        for j in range(dimension):
+            if i == j: 
+                matrix[i][j] = d
+            elif i < j: 
+                matrix[i][j] = up[(j-i-1) % len(up)]
+            else: 
+                matrix[i][j] = down[(i-j-1) % len(down)]
+				
+	with open('diagonal1.txt', 'w') as file:
+		for i in result:
+			for j in i:
+				file.write(str(j) + ',')
+			file.write('\n')
+	
+	matrix2 = np.fliplr(result)
+	
+	with open('diagonal2.txt', 'w') as file:
+		for i in matrix2:
+			for j in i:
+				file.write(str(j) + ',')
+			file.write('\n')
+	
+    return matrix
+
+def show_kernel(n):
+	ff = model.layers[0].get_weights()
+
+	for nn in range(len(ff[0][0][0][0])):
+	print('\n' + f'Номер сверточного ядра: {nn}')
+	for kk in range(len(ff[0][0][0])):
+		for i in range(len(ff[0])):
+			for j in range(len(ff[0][i])):
+        
+			print(ff[0][i][j][kk][nn], end=',')
+		print()
+		print('\n')
 
