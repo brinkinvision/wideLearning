@@ -1,6 +1,6 @@
 # wideLearning
 Библиотека поиска оптимальной архитектуры нейронной сети.
-!(/wideL.png)
+!(/wideLearning/wideL.png)
 
 # Установка
 pip install widelearning
