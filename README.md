@@ -1,7 +1,7 @@
 # wideLearning
 ![Логотип](/wideL.png)
 
-[![Python](https://disk.yandex.ru/i/KeudC_kpCjvYsg)](https://pypi.org/project/widelearning/)
+[![Python](https://disk.yandex.ru/d/aXV2j7K_kNh-yw)](https://pypi.org/project/widelearning/)
 
 # Минимальные требования к аппаратной части:
 * Операционная система: Windows 7 или выше (64-bit), Linux (64-bit)
