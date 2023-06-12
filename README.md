@@ -2,6 +2,7 @@
 ![Логотип](/wideL.png)
 
 [Перейти на GitFlic](https://gitflic.ru/project/brinkinvision/wide-learning)
+
 [Перейти на PyPI](https://pypi.org/project/widelearning/)
 
 # Минимальные требования к аппаратной части:
