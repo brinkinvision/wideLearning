@@ -1,9 +1,7 @@
 # wideLearning
 ![Логотип](/wideL.png)
 
-[Перейти на GitFlic](https://gitflic.ru/project/brinkinvision/wide-learning)
-
-[Перейти на PyPI](https://pypi.org/project/widelearning/)
+[**`Инструкция`**](https://github.com/brinkinvision/wideLearning/tree/main/Туториал) | [**`GitFlic`**](https://gitflic.ru/project/brinkinvision/wide-learning) | [**`PyPI`**](https://pypi.org/project/widelearning/) | [**`Пример новых вариантов использования`**](https://github.com/brinkinvision/wideLearning/tree/main/Обучение_на_ошибках)
 
 # Минимальные требования к аппаратной части:
 * Операционная система: Windows 7 или выше (64-bit), Linux (64-bit)
