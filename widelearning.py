@@ -363,16 +363,16 @@ def add_kernel_rgb(k1, k2, k3, w):
         for i1, elem in enumerate(ii):
             ii[i1] = int(elem)
 
-    for i in range(len(w1)):
-        for j in range(len(w1)):
+    for i in range(len(w11)):
+        for j in range(len(w11)):
             w[i][j][0].append(w11[i][j])
 	########################################
-    for i in range(len(w1)):
-        for j in range(len(w1)):
+    for i in range(len(w11)):
+        for j in range(len(w11)):
             w[i][j][1].append(w22[i][j])
 	########################################
-    for i in range(len(w1)):
-        for j in range(len(w1)):
+    for i in range(len(w11)):
+        for j in range(len(w11)):
             w[i][j][2].append(w33[i][j])
 	########################################
 	
@@ -2733,7 +2733,434 @@ def count_conv_operations(height, width, color_channels, kernel_size, stride, nu
     print('Кол-во вычислительных операций = ', num_operations)  
     print('Кол-во вычислительных операций (no_bias) = ', no_bias)
 
+def auto_select(neuron, path, label, target):
+    '''
+    Функция для расчета первоначального приближения с автоматическим выбором целевого класса.
 
+    Параметры
+    ----------
+    neuron : int
+        номер нейрона, для которого производится расчет
+    path : str
+        путь к целочисленной обучающей выборке в формате csv 
+    label : str
+        название столбца с метками классов
+    target : str, list
+        параметр, на основании которого выбирается целевой класс
+        1. 'up' - максимальное количество отсеченных экземпляров сверху
+        2. 'mx_ratio' - максимальная доля отсеченных экземпляров к неотсеченным сверху
+        3. [class] - собственный выбор целевого класса, вместо class необходимо добавить название класса в виде строки или числа 
+
+    Пример использования:
+    wdl.auto_select(1, 'KH_train.csv', 'UNS', ['very_low']) 
+    wdl.auto_select(1, 'KH_train.csv', 'UNS', 'mx_ratio') 
+
+    '''
+
+    if(os.path.exists('data') == True):
+        pass
+    else:
+        os.mkdir('data')
+        
+        
+    if(os.path.exists('weights') == True):
+        pass
+    else:
+        os.mkdir('weights')
+    
+    all_classes = pd.read_csv(path)
+    all_classes.drop(all_classes.columns[0], axis=1, inplace=True)
+    
+    uniq = pd.unique(all_classes[[label]].values.ravel('K'))
+    uniq = list(uniq)
+    
+    up_max = 0
+    max_ratio = 0
+    
+    if((target == 'mx_ratio') or (target == 'up')):
+        for o in range(len(uniq)):
+            uniq1 = uniq.copy()
+            z = o
+            top = uniq1[z:z+1]
+            uniq1.remove(top[0])
+            other = uniq1.copy()
+        
+            class_top = all_classes[all_classes[label].isin(top)] 
+            other_classes = all_classes[all_classes[label].isin(other)] 
+        
+        
+            class_top['Scalar_calc'] = ""
+            other_classes['Scalar_calc'] = ""
+        
+            class_top.to_csv('class_top.csv')
+            other_classes.to_csv('other_classes.csv')
+        
+            class_top = pd.read_csv('class_top.csv')
+            other_classes = pd.read_csv('other_classes.csv')
+        
+            class_top.drop(class_top.columns[0], axis=1, inplace=True)
+            other_classes.drop(other_classes.columns[0], axis=1, inplace=True)
+        
+            cl = other_classes.columns
+        
+            columns = []
+            for j in range(1, len(cl)):
+                if(cl[j]=='N'):
+                    break
+                else:
+                    columns.append(cl[j])
+        
+            d = []
+            for c1 in range(len(columns)):
+                z = f'd{c1}'
+                d.append(z)
+        
+            class_top_exp = 1
+            other_classes_exp = -(len(class_top)/len(other_classes))
+        
+            for c2 in range(len(d)):
+                class_top[d[c2]] = ''
+                other_classes[d[c2]] = ''
+        
+            for i1 in range(len(d)):
+                class_top[d[i1]] = class_top[columns[i1]]*class_top_exp
+        
+            for i2 in range(len(d)):
+                other_classes[d[i2]] = other_classes[columns[i2]]*other_classes_exp
+        
+            sm1 = class_top.sum()
+            sm2 = other_classes.sum()
+        
+            weights1 = []
+            for u in range(len(d)):
+                weights1.append(sm1[d[u]])
+        
+            weights2 = []
+            for uu in range(len(d)):
+                weights2.append(sm2[d[uu]]) 
+           
+            weights = [x+y for x, y in zip(weights1, weights2)]
+         
+            for i in range(len(class_top)):
+                xx = class_top.iloc[i]
+                x = []
+                for u in range(len(columns)):
+                    x.append(xx[columns[u]])
+            
+                f = np.array(weights)
+                g = np.array(x)
+                scalar = np.dot(f, g)
+        
+                class_top['Scalar_calc'][i]=scalar
+        
+            class_top = class_top.sort_values(by='Scalar_calc', ascending=False)
+        
+            for j in range(len(other_classes)):
+                xx_other = other_classes.iloc[j]
+                x_other = []
+                for uu in range(len(columns)):
+                    x_other.append(xx_other[columns[uu]])
+            
+                f1 = np.array(weights)
+                g1 = np.array(x_other)
+                scalar1 = np.dot(f1, g1)
+                other_classes['Scalar_calc'][j]=scalar1
+        
+            other_classes = other_classes.sort_values(by='Scalar_calc', ascending=False)
+        
+            up = 0
+            for i in class_top['Scalar_calc']:
+                if(i > other_classes['Scalar_calc'].max()):
+                    up+=1
+                else:
+                    break
+           
+            other_classes.to_csv('other_classes.csv')
+            other_classes = pd.read_csv('other_classes.csv')
+        
+            li = len(other_classes[label]) - 1
+            
+            lastindex_class_other_classes = other_classes[label][li]
+        
+            if((len(other_classes[label]))==1):
+              down = 1
+            else:
+              down = 0
+              for i in range(len(other_classes)-1, 0, -1):
+                if(other_classes[label][i]==lastindex_class_other_classes):
+                    down+=1
+                else:
+                    break
+        
+            other_classes.drop(other_classes.columns[0], axis=1, inplace=True)
+        
+            sum_up_down = up + down
+        
+            class_top_cut = class_top.iloc[up:]
+            other_classes_cut = other_classes.iloc[:-down]
+            
+            del class_top_cut['Scalar_calc']
+            del other_classes_cut['Scalar_calc']
+            
+            for i1 in range(len(d)):
+                del class_top_cut[d[i1]] 
+            
+            for i2 in range(len(d)):
+                del other_classes_cut[d[i2]]
+                
+            print('Количество отсеченных сверху = ', up)
+            print("Количество НЕотсеченных сверху = ", len(class_top_cut))
+            print('Количество отсеченных снизу = ', down)
+            print("Количество НЕотсеченных снизу = ", len(other_classes_cut))
+            print('===Нижняя категория: ', lastindex_class_other_classes)
+            print('СУММА отсеченных сверху и снизу = ', sum_up_down)
+            print('TOP - ', top)
+            print('OTHERS - ', other)    
+            print('+++++++++++++++++++++++++')
+            
+            if(target == 'up'):
+                if(up_max < up):
+                    up_max = up
+                    top_max = top
+                    other_max = other
+                    
+                    if(os.path.exists('tmp') == False):
+                        os.mkdir('tmp')
+                    os.mkdir(f'tmp/train_{top_max}{other_max}')
+        
+                    class_top_cut.to_csv(f'tmp/train_{top_max}{other_max}/class_top_{top_max}{other_max}.csv')
+                    other_classes_cut.to_csv(f'tmp/train_{top_max}{other_max}/other_classes_{top_max}{other_max}.csv')
+            
+                    with open(f'weights/w_{neuron}.txt', 'w') as file:
+                        file.write(str(weights))
+        
+                    folder_path = f'tmp/train_{top_max}{other_max}'
+                    file_list = [file for file in os.listdir(folder_path) if file.endswith('.csv')]
+            
+            if(target == 'mx_ratio'):
+                ratio = up / len(class_top_cut)
+                if(max_ratio < ratio):
+                    max_ratio = ratio
+                    top_max = top
+                    other_max = other
+                
+                    if(os.path.exists('tmp') == False):
+                        os.mkdir('tmp')
+                    os.mkdir(f'tmp/train_{top_max}{other_max}')
+        
+                    class_top_cut.to_csv(f'tmp/train_{top_max}{other_max}/class_top_{top_max}{other_max}.csv')
+                    other_classes_cut.to_csv(f'tmp/train_{top_max}{other_max}/other_classes_{top_max}{other_max}.csv')
+            
+                    with open(f'weights/w_{neuron}.txt', 'w') as file:
+                        file.write(str(weights))
+        
+                    folder_path = f'tmp/train_{top_max}{other_max}'
+                    file_list = [file for file in os.listdir(folder_path) if file.endswith('.csv')]
+        
+        if len(file_list) < 2:
+            print("Должно быть как минимум два CSV файла в папке для объединения.")
+            exit()
+        
+        dfs = [pd.read_csv(os.path.join(folder_path, file)) for file in file_list]
+        merged_df = pd.concat(dfs)
+        merged_df.drop(merged_df.columns[0], axis=1, inplace=True)
+        
+        nn = neuron + 1
+        fldr = 'data'
+        output_path = os.path.join(fldr, f'train_{nn}.csv')
+        
+        merged_df.to_csv(output_path)
+        
+        dr = 'tmp'
+        shutil.rmtree(dr)
+        
+        os.remove('class_top.csv')
+        os.remove('other_classes.csv')
+        
+        if(neuron == 1):
+            train1 = pd.read_csv(path) 
+            train1.drop(train1.columns[0], axis=1, inplace=True)
+            train1.to_csv('data/train_1.csv')
+    
+        print('В качестве целевого выбран класс:', top_max)
+    
+    else:
+        uniq1 = uniq.copy()
+        top = target
+        uniq1.remove(top[0])
+        other = uniq1.copy()
+        
+        class_top = all_classes[all_classes[label].isin(top)] 
+        other_classes = all_classes[all_classes[label].isin(other)] 
+    
+    
+        class_top['Scalar_calc'] = ""
+        other_classes['Scalar_calc'] = ""
+    
+        class_top.to_csv('class_top.csv')
+        other_classes.to_csv('other_classes.csv')
+    
+        class_top = pd.read_csv('class_top.csv')
+        other_classes = pd.read_csv('other_classes.csv')
+    
+        class_top.drop(class_top.columns[0], axis=1, inplace=True)
+        other_classes.drop(other_classes.columns[0], axis=1, inplace=True)
+    
+        cl = other_classes.columns
+    
+        columns = []
+        for j in range(1, len(cl)):
+            if(cl[j]=='N'):
+                break
+            else:
+                columns.append(cl[j])
+    
+        d = []
+        for c1 in range(len(columns)):
+            z = f'd{c1}'
+            d.append(z)
+    
+        class_top_exp = 1
+        other_classes_exp = -(len(class_top)/len(other_classes))
+    
+        for c2 in range(len(d)):
+            class_top[d[c2]] = ''
+            other_classes[d[c2]] = ''
+    
+        for i1 in range(len(d)):
+            class_top[d[i1]] = class_top[columns[i1]]*class_top_exp
+    
+        for i2 in range(len(d)):
+            other_classes[d[i2]] = other_classes[columns[i2]]*other_classes_exp
+    
+        sm1 = class_top.sum()
+        sm2 = other_classes.sum()
+    
+        weights1 = []
+        for u in range(len(d)):
+            weights1.append(sm1[d[u]])
+    
+        weights2 = []
+        for uu in range(len(d)):
+            weights2.append(sm2[d[uu]]) 
+       
+        weights = [x+y for x, y in zip(weights1, weights2)]
+     
+        for i in range(len(class_top)):
+            xx = class_top.iloc[i]
+            x = []
+            for u in range(len(columns)):
+                x.append(xx[columns[u]])
+        
+            f = np.array(weights)
+            g = np.array(x)
+            scalar = np.dot(f, g)
+    
+            class_top['Scalar_calc'][i]=scalar
+    
+        class_top = class_top.sort_values(by='Scalar_calc', ascending=False)
+    
+        for j in range(len(other_classes)):
+            xx_other = other_classes.iloc[j]
+            x_other = []
+            for uu in range(len(columns)):
+                x_other.append(xx_other[columns[uu]])
+        
+            f1 = np.array(weights)
+            g1 = np.array(x_other)
+            scalar1 = np.dot(f1, g1)
+            other_classes['Scalar_calc'][j]=scalar1
+    
+        other_classes = other_classes.sort_values(by='Scalar_calc', ascending=False)
+    
+        up = 0
+        for i in class_top['Scalar_calc']:
+            if(i > other_classes['Scalar_calc'].max()):
+                up+=1
+            else:
+                break
+       
+        other_classes.to_csv('other_classes.csv')
+        other_classes = pd.read_csv('other_classes.csv')
+    
+        li = len(other_classes[label]) - 1
+        
+        lastindex_class_other_classes = other_classes[label][li]
+    
+        if((len(other_classes[label]))==1):
+          down = 1
+        else:
+          down = 0
+          for i in range(len(other_classes)-1, 0, -1):
+            if(other_classes[label][i]==lastindex_class_other_classes):
+                down+=1
+            else:
+                break
+    
+        other_classes.drop(other_classes.columns[0], axis=1, inplace=True)
+    
+        sum_up_down = up + down
+    
+        class_top_cut = class_top.iloc[up:]
+        other_classes_cut = other_classes.iloc[:-down]
+        
+        del class_top_cut['Scalar_calc']
+        del other_classes_cut['Scalar_calc']
+        
+        for i1 in range(len(d)):
+            del class_top_cut[d[i1]] 
+        
+        for i2 in range(len(d)):
+            del other_classes_cut[d[i2]]
+            
+        print('Количество отсеченных сверху = ', up)
+        print("Количество НЕотсеченных сверху = ", len(class_top_cut))
+        print('Количество отсеченных снизу = ', down)
+        print("Количество НЕотсеченных снизу = ", len(other_classes_cut))
+        print('===Нижняя категория: ', lastindex_class_other_classes)
+        print('СУММА отсеченных сверху и снизу = ', sum_up_down)
+        print('TOP - ', top)
+        print('OTHERS - ', other)    
+        print('+++++++++++++++++++++++++')
+    
+            
+        if(os.path.exists('tmp') == False):
+            os.mkdir('tmp')
+        os.mkdir(f'tmp/train_{top}{other}')
+    
+        class_top_cut.to_csv(f'tmp/train_{top}{other}/class_top_{top}{other}.csv')
+        other_classes_cut.to_csv(f'tmp/train_{top}{other}/other_classes_{top}{other}.csv')
+        
+        with open(f'weights/w_{neuron}.txt', 'w') as file:
+            file.write(str(weights))
+    
+        folder_path = f'tmp/train_{top}{other}'
+        file_list = [file for file in os.listdir(folder_path) if file.endswith('.csv')]
+    
+        if len(file_list) < 2:
+            print("Должно быть как минимум два CSV файла в папке для объединения.")
+            exit()
+    
+        dfs = [pd.read_csv(os.path.join(folder_path, file)) for file in file_list]
+        merged_df = pd.concat(dfs)
+        merged_df.drop(merged_df.columns[0], axis=1, inplace=True)
+    
+        nn = neuron + 1
+        fldr = 'data'
+        output_path = os.path.join(fldr, f'train_{nn}.csv')
+    
+        merged_df.to_csv(output_path)
+    
+        dr = 'tmp'
+        shutil.rmtree(dr)
+    
+        os.remove('class_top.csv')
+        os.remove('other_classes.csv')
+    
+        if(neuron == 1):
+            train1 = pd.read_csv(path) 
+            train1.drop(train1.columns[0], axis=1, inplace=True)
+            train1.to_csv('data/train_1.csv')
 
 
         
