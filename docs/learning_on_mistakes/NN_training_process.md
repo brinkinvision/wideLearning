@@ -12,9 +12,8 @@ https://archive.ics.uci.edu/ml/datasets/Forest+type+mapping
 ```
 
 Он представлен в вещественнозначном виде:
-<div align="center">
-    <img src="images/learning_on_mistakes_img/1_mistake.png" align="center" alt="1_mistake" />
-</div>
+
+<img src="images/learning_on_mistakes_img/1_mistake.png" align="center" alt="1_mistake" />
 
 Варианты обучения нейронной сети wide_train.ipynb содержатся в папках "1_first_train", "2_add_12_92", "3_add_10", "4_add_125" репозитория.
 
@@ -26,91 +25,65 @@ https://archive.ics.uci.edu/ml/datasets/Forest+type+mapping
 
 Таким образом, на локальном компьютере создана тестовая папка test, в которой добавлена папка 1_first_train, соответствующая первому обучению нейронной сети, со следующими файлами:
 
-<div align="center">
-    <img src="images/learning_on_mistakes_img/2_mistake.png" align="center" alt="2_mistake" />
-</div>
+<img src="images/learning_on_mistakes_img/2_mistake.png" align="center" alt="2_mistake" />
 
 В файле wide_train.ipynb содержатся команды для проведения обучения. Сначала происходит импорт библиотеки widelearning, далее обучение с выбором целевого класса и в конце проверка результатов обучения.
 
 Для первого обучения необходимо преобразовать набор данных data.csv в целочисленный вид с использованием функции data_int. В результате выполнения преобразования папка 1_first_train выглядит следующим образом:
 
-<div align="center">
-    <img src="images/learning_on_mistakes_img/3_mistake.png" align="center" alt="3_mistake" />
-</div>
+<img src="images/learning_on_mistakes_img/3_mistake.png" align="center" alt="3_mistake" />
 
 Среди всех файлов csv в папке 1_first_train необходимо оставить FOREST_train.csv и FOREST_test.csv. Остальные csv файлы можно удалить. Файл FOREST_train.csv, который является обучающей выборкой для первого нейрона, необходимо переименовать в train_1.csv. Создадим в папке 1_first_train две папки: data и weights. В папку data будут помещены обучающие выборки для каждого нейрона, в папку weights - веса каждого нейрона. До проведения обучения обучающая выборка для первого нейрона train_1.csv должна быть помещена в папку data.
 
 Начнем обучение первого нейрона, указав путь к соответствующей обучающей выборке (train_1.csv). В результате выполнения функции select_top сгенерировались следующие папки, в которых значение в первых квадратных скобках обозначает целевой класс:
 
-<div align="center">
-    <img src="images/learning_on_mistakes_img/4_mistake.png" align="center" alt="4_mistake" />
-</div>
+<img src="images/learning_on_mistakes_img/4_mistake.png" align="center" alt="4_mistake" />
 
 Целевой класс выбирается по максимальной доле отсеченных экземпляров "сверху". В данном случае на первом нейроне целевым классом выбирается класс "o". Открываем соответствующую папку и копируем файлы w.txt и train.csv в папки data и weights, переименовав их после перемещения. То есть выбираем соответствующий файл весов для выбранного целевого класса:
 
-<div align="center">
-    <img src="images/learning_on_mistakes_img/5_mistake.png" align="center" alt="5_mistake" />
-</div>
+<img src="images/learning_on_mistakes_img/5_mistake.png" align="center" alt="5_mistake" />
 
 Копируем этот файл весов в папку weights и переименовываем:
 
-<div align="center">
-    <img src="images/learning_on_mistakes_img/6_mistake.png" align="center" alt="6_mistake" />
-</div>
+<img src="images/learning_on_mistakes_img/6_mistake.png" align="center" alt="6_mistake" />
 
 Выбираем соответствующую обучающую выборку для следующего нейрона и копируем ее в папку data каталога 1_first_train:
 
-<div align="center">
-    <img src="images/learning_on_mistakes_img/7_mistake.png" align="center" alt="7_mistake" />
-</div>
+<img src="images/learning_on_mistakes_img/7_mistake.png" align="center" alt="7_mistake" />
 
 Далее переименовываем эту обучающую выборку:
 
-<div align="center">
-    <img src="images/learning_on_mistakes_img/8_mistake.png" align="center" alt="8_mistake" />
-</div>
+<img src="images/learning_on_mistakes_img/8_mistake.png" align="center" alt="8_mistake" />
 
 Удаляем папки, сгенерированные после select_top.
 
 Обучаем второй нейрон, выбираем соответствующую целевому классу папку (класс "h"), копируем оттуда обучающую выборку для следующего нейрона и файл весов текущего нейрона в папки data и weights:
 
-<div align="center">
-    <img src="images/learning_on_mistakes_img/9_mistake.png" align="center" alt="9_mistake" />
-</div>
+<img src="images/learning_on_mistakes_img/9_mistake.png" align="center" alt="9_mistake" />
 
 Переименовываем следующим образом:
 
-<div align="center">
-    <img src="images/learning_on_mistakes_img/10_mistake.png" align="center" alt="10_mistake" />
-</div>
+<img src="images/learning_on_mistakes_img/10_mistake.png" align="center" alt="10_mistake" />
 
 Удаляем сгенерированные папки.
 
 Обучаем третий нейрон. Копируем обучающую выборку и файл весов в папки data и weights (класс "d").
 
-<div align="center">
-    <img src="images/learning_on_mistakes_img/11_mistake.png" align="center" alt="11_mistake" />
-</div>
+<img src="images/learning_on_mistakes_img/11_mistake.png" align="center" alt="11_mistake" />
 
 Переименовываем файлы:
 
-<div align="center">
-    <img src="images/learning_on_mistakes_img/12_mistake.png" align="center" alt="12_mistake" />
-</div>
+<img src="images/learning_on_mistakes_img/12_mistake.png" align="center" alt="12_mistake" />
 
 Дальнейшее обучение выполняется аналогичным образом.
 
 На восьмом нейроне в обучающей выборке остаются два класса: "h" и "s". Для обучения используется вариант функции для бинарного датасета с пометкой binary. В данном случае файлы train.csv и w.txt генерируются прямо в папку 1_first_train, без вложения в соответствующие папки:
 
-<div align="center">
-    <img src="images/learning_on_mistakes_img/13_mistake.png" align="center" alt="13_mistake" />
-</div>
+<img src="images/learning_on_mistakes_img/13_mistake.png" align="center" alt="13_mistake" />
 
 На восьмом (последнем) нейроне целевым выбирается класс "s". Копируется соответствующий файл весов в папку weights:
 
-<div align="center">
-    <img src="images/learning_on_mistakes_img/14_mistake.png" align="center" alt="14_mistake" />
-</div>
+<img src="images/learning_on_mistakes_img/14_mistake.png" align="center" alt="14_mistake" />
 
 Далее этот файл весов переименовывается как w_8.txt.
 
@@ -120,9 +93,7 @@ https://archive.ics.uci.edu/ml/datasets/Forest+type+mapping
 
 Далее масштабируются полученные веса с помощью функции scale_weights. Генерируются дополнительные папки all_weights, scale, result:
 
-<div align="center">
-    <img src="images/learning_on_mistakes_img/15_mistake.png" align="center" alt="15_mistake" />
-</div>
+<img src="images/learning_on_mistakes_img/15_mistake.png" align="center" alt="15_mistake" />
 
 Папки result и scale являются побочными для генерации файлы txt со всеми весами, находящегося в папке all_weights.
 
