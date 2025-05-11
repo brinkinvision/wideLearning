@@ -37,28 +37,28 @@ import widelearning as wdl
 
 Открытый в MS Excel файл выглядит следующим образом:
 
-<img src="images/tutorial_img/modified_dense/1.png" align="center" alt="1_dense" />
+<img src="/images/tutorial_img/modified_dense/1.png" align="center" alt="1_dense" />
 
 Скопируем часть, содержащую данные, в новый файл формата csv и переместим столбец UNS (состоит из меток принадлежности к классам) в начало. Заменим разделитель целой и дробной части вместо запятой «,» на точку «.». Также необходимо разделитель столбцов поменять с «;» на «,». Иногда данные в csv файле могут быть после преобразований заключены в двойные кавычки. Необходимо также удалить из итогового файла этот знак.
 Получившийся файл, открытый в текстовом редакторе:
 
-<img src="images/tutorial_img/modified_dense/2.png" align="center" alt="2_dense" />
+<img src="/images/tutorial_img/modified_dense/2.png" align="center" alt="2_dense" />
 
 2. Преобразование в целочисленный вид
 
 Для выполнения вычислений преобразуем с помощью функции data_int представленные в вещественнозначном виде данные в целочисленный. Создадим файл dec.txt, который содержит количество знаков после запятой для каждого столбца файла csv. Значения количества знаков в файле txt идут на новой строке для каждого следующего столбца, то есть в нашем случае имеется 5 столбцов, для каждого столбца количество знаков равно 2. В итоге в файле dec.txt 5 строк со значением 2:
 
-<img src="images/tutorial_img/modified_dense/2.png" align="center" alt="3_dense" />
+<img src="/images/tutorial_img/modified_dense/2.png" align="center" alt="3_dense" />
 
 Первый параметр функции – путь к подготовленной выборке в формате csv, второй параметр – файл со значениями количества знаков после запятой для каждого столбца, третий параметр – желаемое название выходных преобразованных в целочисленный вид файлов.
 ```
 wdl.data_int('kahraman.csv', 'dec.txt', 'KAHRAMAN') 
 ```
-<img src="images/tutorial_img/modified_dense/4.png" align="center" alt="4_dense" />
+<img src="/images/tutorial_img/modified_dense/4.png" align="center" alt="4_dense" />
 
 В результате применения функции data_int получим целочисленные обучающую и тестовую выборки:
    
-<img src="images/tutorial_img/modified_dense/5.png" align="center" alt="5_dense" />
+<img src="/images/tutorial_img/modified_dense/5.png" align="center" alt="5_dense" />
 
 3. Первоначальное приближение первого нейрона
 
@@ -109,7 +109,7 @@ OTHERS -  ['very_low', 'High', 'Low']
 Переменная TOP обозначает целевой класс и соответсвенно, «Нижняя категория» - это противоположный класс, участвующий в отсечении.
 Были также сгенерированы папки:
 
-<img src="images/tutorial_img/modified_dense/6.png" align="center" alt="6_dense" />
+<img src="/images/tutorial_img/modified_dense/6.png" align="center" alt="6_dense" />
 
 Необходимо выбрать целевой класс. Выбор можно производить по разным критериям: 
 * по сумме отсеченных сверху и снизу;
@@ -118,7 +118,7 @@ OTHERS -  ['very_low', 'High', 'Low']
 
 От выбора целевого класса зависит итоговая структура нейронной сети. В нашем случае целевой класс будет выбираться по сумме отсеченных экземпляров сверху и снизу. Таким образом, в качестве целевого на первом нейроне выступает класс «High», поскольку сумма отсеченных равна 25. Если мы хотим оставить полученные результаты без проведения градиентного уточнения вектора весов, то необходимо открыть соответствующую папку и скопировать в отдельный каталог файлы w.txt и train.csv, которые являются вектором весов первого нейрона и сокращенной выборкой для второго нейрона:
 
-<img src="images/tutorial_img/modified_dense/7.png" align="center" alt="7_dense" />
+<img src="/images/tutorial_img/modified_dense/7.png" align="center" alt="7_dense" />
 
 4. Градиентное уточнение первого нейрона
 
@@ -130,13 +130,13 @@ wdl.grad('KAHRAMAN_train.csv', ['High'], ['very_low', 'Low', 'Middle'], 'UNS', 1
 ```
 В результате градиентного уточнения сгенерировались папки train_{i}.csv. 
 
-<img src="images/tutorial_img/modified_dense/8.png" align="center" alt="8_dense" />
+<img src="/images/tutorial_img/modified_dense/8.png" align="center" alt="8_dense" />
 
 Необходимо проверить каждую из них и выбрать ту папку, в которой в файле txt во второй строке (количество отсеченных сверху) наибольшее значение. Если значения одинаковые, то необходимо проверить третью строку (количество отсеченных снизу) и выбрать ту папку, в которой данное значение наибольшее. В случае одинаковых значений сверху и снизу, необходимо выбирать папку по последней строке файла txt, которое обозначает расстояние между границами, оно должно быть минимальное.
 
 Таким образом, в нашем случае все три значения для всех папок одинаковые, поэтому выбирается любая. Выберем папку под номером 0. Необходимо скопировать отдельно файл train.csv и w.txt. Первый файл является сокращенной обучающей выборкой для второго нейрона, второй файл – является вектором весов первого нейрона.
 
-<img src="images/tutorial_img/modified_dense/9.png" align="center" alt="9_dense" />
+<img src="/images/tutorial_img/modified_dense/9.png" align="center" alt="9_dense" />
 
 После градиентного уточнения количество отсеченных экземпляров увеличилось: сверху до 49, снизу до 10.
 
@@ -374,15 +374,15 @@ DISTANCE =  205.0
 
 Необходимо скопировать вектор весов из соответствующего файла:
 
-<img src="images/tutorial_img/modified_dense/10.png" align="center" alt="10_dense" />
+<img src="/images/tutorial_img/modified_dense/10.png" align="center" alt="10_dense" />
 
 14. Проверка результатов
 
 В папку data переместим обучающие выборки для каждого нейрона. В папку weights соответствующие вектора весов. Принцип наименования должен соответствовать следующему виду:
 
-<img src="images/tutorial_img/modified_dense/11.png" align="center" alt="11_dense" />
+<img src="/images/tutorial_img/modified_dense/11.png" align="center" alt="11_dense" />
 
-<img src="images/tutorial_img/modified_dense/12.png" align="center" alt="12_dense" />
+<img src="/images/tutorial_img/modified_dense/12.png" align="center" alt="12_dense" />
 
 Полученные веса сначала необходимо масштабировать в диапазон от -1 до 1 с помощью функции scale_weights, в которой первый параметр – это название столбца с метками классов, второй параметр – путь к папке, содержащей обучающие выборки, третий параметр – путь к папке, содержащей веса для каждого нейрона.
 ```
@@ -396,21 +396,21 @@ wdl.check_test('KAHRAMAN_train.csv', 'all_weights/weights.txt', 'KAHRAMAN_test.c
 ```
 Таким образом имеется две ошибки на тестовой выборке (экземпляры № 3 и 160).
 
-<img src="images/tutorial_img/modified_dense/13.png" align="center" alt="13_dense" />
+<img src="/images/tutorial_img/modified_dense/13.png" align="center" alt="13_dense" />
 
 Если третьим параметром передать путь к обучающей выборке, то будет определена точность по обучающей выборке:
 ```
 wdl.check_test('KAHRAMAN_train.csv', 'all_weights/weights.txt', 'KAHRAMAN_train.csv', 'UNS')
 ```
 
-<img src="images/tutorial_img/modified_dense/14.png" align="center" alt="14_dense" />
+<img src="/images/tutorial_img/modified_dense/14.png" align="center" alt="14_dense" />
 
 Для генерации функции логического вывода можно применить функцию generate_fa:
 ```
 wdl.generate_fa('UNS', 'result', 'scale')
 ```
 
-<img src="images/tutorial_img/modified_dense/15.png" align="center" alt="15_dense" />
+<img src="/images/tutorial_img/modified_dense/15.png" align="center" alt="15_dense" />
 
 Здесь первый параметр – название столбца с метками классов, второй параметр – путь к папке result, содержащей вычисления скалярного произведения для каждой из обучающих выборок, третий параметр – путь к папке scale – в которой содержатся в отдельных файлах отмасштабированные веса каждого нейрона.
 
@@ -427,7 +427,7 @@ pip install matplotlib
 ```
 wdl.count_conv_operations(28, 28, 1, 3, 1, 6)
 ```
-<img src="images/tutorial_img/discrete_conv/1.png" align="center" alt="1_conv" />
+<img src="/images/tutorial_img/discrete_conv/1.png" align="center" alt="1_conv" />
 
 Первые два параметра функции – это высота и ширина исходного изображения, третий параметр – количество цветовых каналов, четвертый параметр – размерность сверточного ядра, пятый – шаг сдвига сверточного ядра по изображению, шестой – количество сверточных ядер.
 
@@ -435,7 +435,7 @@ wdl.count_conv_operations(28, 28, 1, 3, 1, 6)
 ```
 wdl.count_conv_operations(28, 28, 1, 14, 7, 4)
 ```
-<img src="images/tutorial_img/discrete_conv/2.png" align="center" alt="2_conv" />
+<img src="/images/tutorial_img/discrete_conv/2.png" align="center" alt="2_conv" />
 
 Таким образом, это снизит количество вычислительных операций. 
 
@@ -454,19 +454,19 @@ model = models.Sequential([
 ```
 wdl.horizontal(14, [-7,-5,-3,-1,1,3,5,7])
 ```
-<img src="images/tutorial_img/discrete_conv/3.png" align="center" alt="3_conv" />
+<img src="/images/tutorial_img/discrete_conv/3.png" align="center" alt="3_conv" />
 
 Аналогичным образом сгенерируем вертикальное ядро:
 ```
 wdl.vertical(14, [-7,-5,-3,-1,1,3,5,7])
 ```
-<img src="images/tutorial_img/discrete_conv/4.png" align="center" alt="4_conv" />
+<img src="/images/tutorial_img/discrete_conv/4.png" align="center" alt="4_conv" />
 
 В случае генерации диагональных ядер сразу генерируются два ядра: главная и побочная диагональ:
 ```
 wdl.diagonal([-7, -5, -3, -1], [1, 3, 5, 7], 1, 14)
 ```
-<img src="images/tutorial_img/discrete_conv/5.png" align="center" alt="5_conv" />
+<img src="/images/tutorial_img/discrete_conv/5.png" align="center" alt="5_conv" />
 
 Первый параметр – список значений, которые будут находиться выше диагонали, второй параметр – список значений, которые будут находиться ниже диагонали, третий параметр – значение, из которого будет состоять диагональ, последний параметр – размерность сверточного ядра.
 
@@ -504,7 +504,7 @@ wdl.show_kernel(0, model)
 
 Вывод функции:
 
-<img src="images/tutorial_img/discrete_conv/6.png" align="center" alt="6_conv" />
+<img src="/images/tutorial_img/discrete_conv/6.png" align="center" alt="6_conv" />
 
 Как видим, ядра установлены правильно. Теперь скомпилируем модель и запустим обучение:
 ```
@@ -515,14 +515,14 @@ model.compile(optimizer='adam',
 ```
 model.fit(x_train, y_train, epochs=10)
 ```
-<img src="images/tutorial_img/discrete_conv/7.png" align="center" alt="7_conv" />
+<img src="/images/tutorial_img/discrete_conv/7.png" align="center" alt="7_conv" />
 
 На таком варианте выбранных параметров сверточного слоя имеются следующие значения точности по обучающей и тестовой выборкам:
 ```
 train_loss, train_acc = model.evaluate(x_train, y_train)
 test_loss, test_acc = model.evaluate(x_test, y_test)
 ```
-<img src="images/tutorial_img/discrete_conv/8.png" align="center" alt="8_conv" />
+<img src="/images/tutorial_img/discrete_conv/8.png" align="center" alt="8_conv" />
 
 MNIST содержит черно-белые изображения. Для цветных изображений (трехканальных RGB) процесс установки ядер в структуру немного отличается. В качестве примера рассмотрим датасет Breast Histopathology Images: [breast_cancer](https://www.kaggle.com/datasets/paultimothymooney/breast-histopathology-images)
 
@@ -562,4 +562,4 @@ model.compile(Adam(learning_rate=0.0001), loss='binary_crossentropy', metrics=['
 ```
 history = model.fit(X_train, Y_train, validation_data = (X_test, Y_test), epochs = 11, batch_size = 35)
 ```
-<img src="images/tutorial_img/discrete_conv/9.png" align="center" alt="9_conv" />
+<img src="/images/tutorial_img/discrete_conv/9.png" align="center" alt="9_conv" />

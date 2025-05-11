@@ -3,7 +3,7 @@
   <p>Открытая библиотека для поиска архитектуры искусственной нейронной сети с использованием дискретизированных сверточных слоев и комплекснозначных алгебр</p>
 </div>
 
-[**`Инструкция`**](/docs/tutorial) | [**`Github`**](https://github.com/brinkinvision/wideLearning) | [**`GitFlic`**](https://gitflic.ru/project/brinkinvision/wide-learning) | [**`PyPI`**](https://pypi.org/project/widelearning/) | [**`Пример новых вариантов использования`**](/docs/learning_on_mistakes)
+[**`Инструкция`**](/docs/tutorial) | [**`Gitlab`**](https://gitlab.com/brinkinvision/widelearning) | [**`GitFlic`**](https://gitflic.ru/project/brinkinvision/wide-learning) | [**`PyPI`**](https://pypi.org/project/widelearning/) | [**`Пример новых вариантов использования`**](/docs/learning_on_mistakes)
 
 # Оглавление
 
